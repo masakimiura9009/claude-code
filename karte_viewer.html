@@ -226,6 +226,16 @@
             return summary.trim();
         }
 
+        function getGuidanceTemplate() {
+            return `・内服薬は指示通り継続すること
+・食事はバランスよく摂取し、1日の塩分は6g未満に制限
+・水分摂取は1日1500ml以上を目標とする
+・毎日体重測定を行い、2日で2kg以上増加時は受診
+・規則正しい生活を心がけること
+・喫煙・アルコールの過剰摂取は控えること
+・異常時（息切れ、浮腫、激しい動悸等）はすぐに連絡`;
+        }
+
         function createKarte() {
             const content = voiceDataInput.value.trim();
 
@@ -236,14 +246,22 @@
 
             const today = new Date();
             const dateStr = `${today.getFullYear()}年${today.getMonth() + 1}月${today.getDate()}日`;
-            const timeStr = `${today.getFullYear()}年${today.getMonth() + 1}月${today.getDate()}日 ${String(today.getHours()).padStart(2, '0')}:${String(today.getMinutes()).padStart(2, '0')}:${String(today.getSeconds()).padStart(2, '0')}`;
 
-            const summary = summarizeText(content, 500);
+            // 指導内容テンプレート（約200文字）
+            const guidance = getGuidanceTemplate();
+
+            // 診療記録用に残りの文字数を計算（300文字程度）
+            const remainingLength = 500 - guidance.length - 30;
+
+            const summary = summarizeText(content, remainingLength);
 
             const karte = `日付: ${dateStr}
 
 【診療記録】
-${summary}`;
+${summary}
+
+【指導内容】
+${guidance}`;
 
             karteOutput.textContent = karte;
             karteOutput.classList.remove('empty');

@@ -44,9 +44,25 @@ def summarize_text(text, max_length=500):
     return summary.strip()
 
 
+def get_guidance_template():
+    """
+    厚生局要件を満たす指導内容のテンプレートを返す
+
+    Returns:
+        str: 指導内容テンプレート
+    """
+    return """・内服薬は指示通り継続すること
+・食事はバランスよく摂取し、1日の塩分は6g未満に制限
+・水分摂取は1日1500ml以上を目標とする
+・毎日体重測定を行い、2日で2kg以上増加時は受診
+・規則正しい生活を心がけること
+・喫煙・アルコールの過剰摂取は控えること
+・異常時（息切れ、浮腫、激しい動悸等）はすぐに連絡"""
+
+
 def create_karte(date_str, content, max_length=500):
     """
-    カルテ形式で出力
+    カルテ形式で出力（診療記録 + 指導内容）
 
     Args:
         date_str (str): 日付（例: 2025年10月28日）
@@ -56,12 +72,21 @@ def create_karte(date_str, content, max_length=500):
     Returns:
         str: カルテ形式のテキスト
     """
-    summary = summarize_text(content, max_length)
+    # 指導内容テンプレート（約200文字）
+    guidance = get_guidance_template()
+
+    # 診療記録用に残りの文字数を計算（300文字程度）
+    remaining_length = max_length - len(guidance) - 30  # 余裕を持たせる
+
+    summary = summarize_text(content, remaining_length)
 
     karte = f"""日付: {date_str}
 
 【診療記録】
-{summary}"""
+{summary}
+
+【指導内容】
+{guidance}"""
     return karte
 
 
