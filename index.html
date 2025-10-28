@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>肥満症チェックリスト</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .bmi-calculator {
+            display: grid;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .input-group label {
+            font-weight: 600;
+            color: #555;
+        }
+
+        .input-group input {
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+
+        .checkbox-item:hover {
+            background-color: #f0f0f0;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 12px;
+            cursor: pointer;
+        }
+
+        .checkbox-item label {
+            cursor: pointer;
+            user-select: none;
+            flex: 1;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .result {
+            margin-top: 30px;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .result.show {
+            display: block;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.8em;
+        }
+
+        .result-content {
+            line-height: 1.8;
+            color: #555;
+        }
+
+        .bmi-result {
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+
+        .risk-level {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .risk-low {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .risk-medium {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .risk-high {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .recommendation {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .recommendation h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .recommendation ul {
+            margin-left: 20px;
+        }
+
+        .recommendation li {
+            margin-bottom: 8px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>肥満症チェックリスト</h1>
+
+        <div class="section">
+            <h2>📊 基本情報・BMI計算</h2>
+            <div class="bmi-calculator">
+                <div class="input-group">
+                    <label for="height">身長 (cm)</label>
+                    <input type="number" id="height" placeholder="例: 170">
+                </div>
+                <div class="input-group">
+                    <label for="weight">体重 (kg)</label>
+                    <input type="number" id="weight" placeholder="例: 70">
+                </div>
+                <div class="input-group">
+                    <label for="age">年齢</label>
+                    <input type="number" id="age" placeholder="例: 35">
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🏥 健康リスク要因</h2>
+            <div class="checkbox-item">
+                <input type="checkbox" id="hypertension" value="2">
+                <label for="hypertension">高血圧（140/90 mmHg以上）</label>
+            </div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="diabetes" value="3">
+                <label for="diabetes">糖尿病または血糖値が高い</label>
+            </div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="cholesterol" value="2">
+                <label for="cholesterol">脂質異常症（コレステロール値が高い）</label>
+            </div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="fatty-liver" value="2">
+                <label for="fatty-liver">脂肪肝と診断されたことがある</label>
+            </div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="sleep-apnea" value="2">
+                <label for="sleep-apnea">睡眠時無呼吸症候群の症状がある</label>
+            </div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="joint-pain" value="1">
+                <label for="joint-pain">膝や腰の痛みがある</label>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🍔 生活習慣</h2>
+            <div class="checkbox-item">
+                <input type="checkbox" id="overeating" value="2">
+                <label for="overeating">食べ過ぎることが多い</label>
+            </div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="late-night" value="1">
+                <label for="late-night">夜遅い時間に食事をすることが多い</label>
+            </div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="fast-food" value="1">
+                <label for="fast-food">週3回以上外食やファストフードを食べる</label>
+            </div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="snacking" value="1">
+                <label for="snacking">間食や甘い飲み物をよく摂る</label>
+            </div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="no-exercise" value="2">
+                <label for="no-exercise">ほとんど運動をしない</label>
+            </div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="sedentary" value="1">
+                <label for="sedentary">座っている時間が1日8時間以上</label>
+            </div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="alcohol" value="1">
+                <label for="alcohol">お酒をよく飲む（週5回以上）</label>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>👨‍👩‍👧‍👦 家族歴</h2>
+            <div class="checkbox-item">
+                <input type="checkbox" id="family-diabetes" value="2">
+                <label for="family-diabetes">家族に糖尿病の人がいる</label>
+            </div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="family-heart" value="1">
+                <label for="family-heart">家族に心疾患の人がいる</label>
+            </div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="family-obesity" value="1">
+                <label for="family-obesity">家族に肥満の人が多い</label>
+            </div>
+        </div>
+
+        <button onclick="calculateResult()">診断結果を見る</button>
+
+        <div class="result" id="result">
+            <h3>診断結果</h3>
+            <div class="result-content">
+                <div class="bmi-result" id="bmi-display"></div>
+                <div id="risk-assessment"></div>
+                <div class="recommendation">
+                    <h4>💡 推奨事項</h4>
+                    <ul id="recommendations"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function calculateResult() {
+            // BMI計算
+            const height = parseFloat(document.getElementById('height').value);
+            const weight = parseFloat(document.getElementById('weight').value);
+            const age = parseInt(document.getElementById('age').value);
+
+            if (!height || !weight || !age) {
+                alert('身長、体重、年齢をすべて入力してください。');
+                return;
+            }
+
+            const heightM = height / 100;
+            const bmi = (weight / (heightM * heightM)).toFixed(1);
+
+            // チェックリスト項目のスコア計算
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
+            let totalScore = 0;
+            checkboxes.forEach(checkbox => {
+                totalScore += parseInt(checkbox.value);
+            });
+
+            // BMIによるリスク判定
+            let bmiCategory = '';
+            let bmiRisk = '';
+            let bmiScore = 0;
+
+            if (bmi < 18.5) {
+                bmiCategory = '低体重';
+                bmiRisk = 'low';
+                bmiScore = 0;
+            } else if (bmi < 25) {
+                bmiCategory = '普通体重';
+                bmiRisk = 'low';
+                bmiScore = 0;
+            } else if (bmi < 30) {
+                bmiCategory = '肥満(1度)';
+                bmiRisk = 'medium';
+                bmiScore = 3;
+            } else if (bmi < 35) {
+                bmiCategory = '肥満(2度)';
+                bmiRisk = 'high';
+                bmiScore = 5;
+            } else {
+                bmiCategory = '肥満(3度以上)';
+                bmiRisk = 'high';
+                bmiScore = 7;
+            }
+
+            totalScore += bmiScore;
+
+            // 結果表示
+            const bmiDisplay = document.getElementById('bmi-display');
+            bmiDisplay.innerHTML = `
+                <strong>BMI: ${bmi}</strong> (${bmiCategory})
+                <span class="risk-level risk-${bmiRisk}">${bmiCategory}</span>
+            `;
+
+            // リスク評価
+            const riskAssessment = document.getElementById('risk-assessment');
+            let overallRisk = '';
+            let riskClass = '';
+            let riskMessage = '';
+
+            if (totalScore <= 5) {
+                overallRisk = '低リスク';
+                riskClass = 'low';
+                riskMessage = '現在の健康状態は比較的良好です。引き続き健康的な生活習慣を維持しましょう。';
+            } else if (totalScore <= 12) {
+                overallRisk = '中リスク';
+                riskClass = 'medium';
+                riskMessage = '肥満症のリスクがやや高まっています。生活習慣の改善を検討することをお勧めします。';
+            } else {
+                overallRisk = '高リスク';
+                riskClass = 'high';
+                riskMessage = '肥満症のリスクが高い状態です。医療機関での相談をお勧めします。';
+            }
+
+            riskAssessment.innerHTML = `
+                <p style="font-size: 1.2em; margin-bottom: 15px;">
+                    <strong>総合評価:</strong>
+                    <span class="risk-level risk-${riskClass}">${overallRisk}</span>
+                </p>
+                <p>${riskMessage}</p>
+            `;
+
+            // 推奨事項
+            const recommendations = document.getElementById('recommendations');
+            const recommendationsList = [];
+
+            if (bmi >= 25) {
+                recommendationsList.push('適正体重に向けて減量を検討しましょう（目標: BMI 18.5〜24.9）');
+            }
+
+            if (document.getElementById('no-exercise').checked || document.getElementById('sedentary').checked) {
+                recommendationsList.push('1日30分以上の有酸素運動を週5回以上行いましょう');
+                recommendationsList.push('座りっぱなしを避け、1時間ごとに立ち上がって軽く体を動かしましょう');
+            }
+
+            if (document.getElementById('overeating').checked || document.getElementById('late-night').checked || document.getElementById('fast-food').checked) {
+                recommendationsList.push('バランスの取れた食事を心がけ、野菜を多く摂りましょう');
+                recommendationsList.push('夕食は就寝3時間前までに済ませるようにしましょう');
+                recommendationsList.push('外食は週2回以内に抑え、自炊を増やしましょう');
+            }
+
+            if (document.getElementById('snacking').checked) {
+                recommendationsList.push('間食は控えめにし、甘い飲み物を水やお茶に置き換えましょう');
+            }
+
+            if (document.getElementById('diabetes').checked || document.getElementById('hypertension').checked || document.getElementById('cholesterol').checked) {
+                recommendationsList.push('定期的な健康診断を受け、医師の指導に従いましょう');
+                recommendationsList.push('塩分や糖分の摂取を控えめにしましょう');
+            }
+
+            if (document.getElementById('sleep-apnea').checked) {
+                recommendationsList.push('睡眠時無呼吸症候群の検査を受けることを検討しましょう');
+            }
+
+            if (totalScore > 12) {
+                recommendationsList.push('医療機関で専門医に相談し、適切な治療計画を立てましょう');
+            }
+
+            if (recommendationsList.length === 0) {
+                recommendationsList.push('現在の健康的な生活習慣を継続しましょう');
+                recommendationsList.push('定期的な健康診断を受けましょう');
+            }
+
+            recommendations.innerHTML = recommendationsList.map(rec => `<li>${rec}</li>`).join('');
+
+            // 結果を表示
+            const resultDiv = document.getElementById('result');
+            resultDiv.classList.add('show');
+            resultDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+    </script>
+</body>
+</html>
