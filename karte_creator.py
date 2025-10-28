@@ -58,21 +58,10 @@ def create_karte(date_str, content, max_length=200):
     """
     summary = summarize_text(content, max_length)
 
-    karte = f"""
-{'='*60}
-カルテ
-{'='*60}
-日付: {date_str}
-{'='*60}
+    karte = f"""日付: {date_str}
 
 【診療記録】
-{summary}
-
-{'='*60}
-文字数: {len(summary)}文字
-作成日時: {datetime.now().strftime('%Y年%m月%d日 %H:%M:%S')}
-{'='*60}
-"""
+{summary}"""
     return karte
 
 
