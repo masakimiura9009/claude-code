@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>肥満症チェックリスト</title>
+    <title>肥満症診断チェックリスト</title>
     <style>
         * {
             margin: 0;
@@ -12,14 +12,14 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
         }
 
         .container {
-            max-width: 800px;
+            max-width: 900px;
             margin: 0 auto;
             background: white;
             border-radius: 20px;
@@ -27,29 +27,92 @@
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
         }
 
-        h1 {
-            color: #333;
+        .header {
             text-align: center;
             margin-bottom: 30px;
-            font-size: 2.5em;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #667eea;
         }
 
-        .section {
-            margin-bottom: 30px;
+        h1 {
+            color: #333;
+            font-size: 2.2em;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.1em;
+            margin-top: 10px;
+        }
+
+        .info-box {
+            background: #e8f4f8;
+            border-left: 4px solid #1e88e5;
             padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+        }
+
+        .info-box h3 {
+            color: #1e88e5;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        .info-box p, .info-box ul {
+            color: #555;
+            line-height: 1.8;
+        }
+
+        .info-box ul {
+            margin-left: 20px;
+            margin-top: 10px;
+        }
+
+        .step {
             background: #f8f9fa;
-            border-radius: 10px;
-            border-left: 4px solid #667eea;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 2px solid #e0e0e0;
+            transition: all 0.3s;
         }
 
-        .section h2 {
-            color: #667eea;
-            margin-bottom: 15px;
-            font-size: 1.5em;
+        .step:hover {
+            border-color: #667eea;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.1);
         }
 
-        .bmi-calculator {
+        .step-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-right: 15px;
+        }
+
+        .step-title {
+            font-size: 1.4em;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .input-grid {
             display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 15px;
             margin-bottom: 20px;
         }
@@ -57,15 +120,16 @@
         .input-group {
             display: flex;
             flex-direction: column;
-            gap: 5px;
+            gap: 8px;
         }
 
         .input-group label {
             font-weight: 600;
             color: #555;
+            font-size: 0.95em;
         }
 
-        .input-group input {
+        .input-group input, .input-group select {
             padding: 12px;
             border: 2px solid #ddd;
             border-radius: 8px;
@@ -73,72 +137,107 @@
             transition: border-color 0.3s;
         }
 
-        .input-group input:focus {
+        .input-group input:focus, .input-group select:focus {
             outline: none;
             border-color: #667eea;
         }
 
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
         .checkbox-item {
             display: flex;
-            align-items: center;
-            margin-bottom: 12px;
-            padding: 10px;
+            align-items: flex-start;
+            padding: 12px;
             background: white;
+            border: 2px solid #e0e0e0;
             border-radius: 8px;
-            transition: background-color 0.2s;
+            transition: all 0.2s;
+            cursor: pointer;
         }
 
         .checkbox-item:hover {
-            background-color: #f0f0f0;
+            background-color: #f8f9fa;
+            border-color: #667eea;
         }
 
         .checkbox-item input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
+            width: 22px;
+            height: 22px;
             margin-right: 12px;
             cursor: pointer;
+            flex-shrink: 0;
+            margin-top: 2px;
         }
 
         .checkbox-item label {
             cursor: pointer;
             user-select: none;
             flex: 1;
+            font-size: 0.98em;
+            color: #333;
+        }
+
+        .section-divider {
+            margin: 20px 0;
+            padding: 15px;
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            border-radius: 8px;
+            font-weight: 600;
+            color: #856404;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
         }
 
         button {
-            width: 100%;
-            padding: 15px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            flex: 1;
+            padding: 16px;
             border: none;
             border-radius: 10px;
-            font-size: 18px;
+            font-size: 1.1em;
             font-weight: 600;
             cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            margin-top: 20px;
+            transition: all 0.3s;
         }
 
-        button:hover {
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
             transform: translateY(-2px);
             box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
         }
 
-        button:active {
-            transform: translateY(0);
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: #f8f9fa;
         }
 
         .result {
             margin-top: 30px;
-            padding: 25px;
-            background: #f8f9fa;
-            border-radius: 10px;
+            padding: 30px;
+            border-radius: 12px;
             display: none;
+            animation: slideIn 0.5s ease;
         }
 
         .result.show {
             display: block;
-            animation: slideIn 0.5s ease;
         }
 
         @keyframes slideIn {
@@ -152,316 +251,465 @@
             }
         }
 
-        .result h3 {
-            color: #333;
-            margin-bottom: 15px;
+        .result-positive {
+            background: #fff3cd;
+            border: 3px solid #ffc107;
+        }
+
+        .result-negative {
+            background: #d4edda;
+            border: 3px solid #28a745;
+        }
+
+        .result-high-risk {
+            background: #f8d7da;
+            border: 3px solid #dc3545;
+        }
+
+        .result h2 {
+            margin-bottom: 20px;
             font-size: 1.8em;
+        }
+
+        .result-positive h2 {
+            color: #856404;
+        }
+
+        .result-negative h2 {
+            color: #155724;
+        }
+
+        .result-high-risk h2 {
+            color: #721c24;
         }
 
         .result-content {
             line-height: 1.8;
+            font-size: 1.05em;
+        }
+
+        .bmi-display {
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 1.2em;
+            text-align: center;
+        }
+
+        .recommendation-box {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .recommendation-box h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .recommendation-box ul {
+            margin-left: 20px;
+        }
+
+        .recommendation-box li {
+            margin-bottom: 10px;
             color: #555;
         }
 
-        .bmi-result {
+        .warning-text {
+            font-size: 1.2em;
+            font-weight: 600;
             padding: 15px;
             background: white;
             border-radius: 8px;
             margin-bottom: 15px;
-            font-size: 1.1em;
         }
 
-        .risk-level {
-            display: inline-block;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-weight: 600;
-            margin-left: 10px;
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .container {
+                box-shadow: none;
+                padding: 20px;
+            }
+
+            .button-group {
+                display: none;
+            }
+
+            .step {
+                page-break-inside: avoid;
+            }
         }
 
-        .risk-low {
-            background: #d4edda;
-            color: #155724;
-        }
-
-        .risk-medium {
-            background: #fff3cd;
-            color: #856404;
-        }
-
-        .risk-high {
-            background: #f8d7da;
-            color: #721c24;
-        }
-
-        .recommendation {
-            background: white;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 15px;
-        }
-
-        .recommendation h4 {
-            color: #667eea;
+        .print-date {
+            text-align: right;
+            color: #666;
+            font-size: 0.9em;
             margin-bottom: 10px;
         }
 
-        .recommendation ul {
-            margin-left: 20px;
+        .note {
+            background: #e8f5e9;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 0.95em;
+            color: #2e7d32;
         }
 
-        .recommendation li {
-            margin-bottom: 8px;
-            color: #555;
+        .flowchart-arrow {
+            text-align: center;
+            font-size: 2em;
+            color: #667eea;
+            margin: 10px 0;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>肥満症チェックリスト</h1>
+        <div class="print-date" id="printDate"></div>
 
-        <div class="section">
-            <h2>📊 基本情報・BMI計算</h2>
-            <div class="bmi-calculator">
+        <div class="header">
+            <h1>🏥 肥満症診断チェックリスト</h1>
+            <p class="subtitle">看護師向け患者スクリーニングツール</p>
+        </div>
+
+        <div class="info-box">
+            <h3>🔴 肥満症とは？</h3>
+            <p><strong>肥満（BMI 25以上）</strong>に加えて、以下のいずれかに該当する場合に診断されます：</p>
+            <ul>
+                <li>肥満に起因・関連する<strong>健康障害（合併症）</strong>がある</li>
+                <li>内臓脂肪型肥満で、将来的に健康障害の合併が予測される</li>
+            </ul>
+            <p style="margin-top: 10px;"><strong>重要：</strong>肥満症は「病気」であり、減量治療の対象になります。</p>
+        </div>
+
+        <!-- Step 1: 基本情報 -->
+        <div class="step">
+            <div class="step-header">
+                <div class="step-number">1</div>
+                <div class="step-title">基本情報の入力</div>
+            </div>
+            <div class="input-grid">
                 <div class="input-group">
-                    <label for="height">身長 (cm)</label>
-                    <input type="number" id="height" placeholder="例: 170">
+                    <label for="height">身長 (cm) <span style="color: red;">*</span></label>
+                    <input type="number" id="height" placeholder="例: 170" step="0.1">
                 </div>
                 <div class="input-group">
-                    <label for="weight">体重 (kg)</label>
-                    <input type="number" id="weight" placeholder="例: 70">
+                    <label for="weight">体重 (kg) <span style="color: red;">*</span></label>
+                    <input type="number" id="weight" placeholder="例: 75" step="0.1">
                 </div>
                 <div class="input-group">
-                    <label for="age">年齢</label>
-                    <input type="number" id="age" placeholder="例: 35">
+                    <label for="waist">腹囲 (cm)</label>
+                    <input type="number" id="waist" placeholder="例: 90" step="0.1">
+                </div>
+                <div class="input-group">
+                    <label for="age">年齢 <span style="color: red;">*</span></label>
+                    <input type="number" id="age" placeholder="例: 45">
+                </div>
+                <div class="input-group">
+                    <label for="gender">性別 <span style="color: red;">*</span></label>
+                    <select id="gender">
+                        <option value="">選択してください</option>
+                        <option value="male">男性</option>
+                        <option value="female">女性</option>
+                    </select>
+                </div>
+            </div>
+            <div class="note">
+                💡 内臓脂肪型肥満の目安：男性 85cm以上、女性 90cm以上
+            </div>
+        </div>
+
+        <!-- Step 2: 治療中の疾患 -->
+        <div class="step">
+            <div class="step-header">
+                <div class="step-number">2</div>
+                <div class="step-title">【A群】現在治療中の疾患</div>
+            </div>
+            <div class="section-divider">
+                以下のいずれか1つ以上に該当する場合、肥満症の可能性が高くなります
+            </div>
+            <div class="checkbox-group">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="treat-hypertension" data-group="A">
+                    <label for="treat-hypertension">高血圧症（薬物治療中）</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="treat-dyslipidemia" data-group="A">
+                    <label for="treat-dyslipidemia">脂質異常症（薬物治療中）</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="treat-diabetes" data-group="A">
+                    <label for="treat-diabetes">2型糖尿病（薬物治療中）</label>
                 </div>
             </div>
         </div>
 
-        <div class="section">
-            <h2>🏥 健康リスク要因</h2>
-            <div class="checkbox-item">
-                <input type="checkbox" id="hypertension" value="2">
-                <label for="hypertension">高血圧（140/90 mmHg以上）</label>
+        <!-- Step 3: 健康障害 -->
+        <div class="step">
+            <div class="step-header">
+                <div class="step-number">3</div>
+                <div class="step-title">【B群】肥満に関連する健康障害（11種類）</div>
             </div>
-            <div class="checkbox-item">
-                <input type="checkbox" id="diabetes" value="3">
-                <label for="diabetes">糖尿病または血糖値が高い</label>
+            <div class="section-divider">
+                BMI 27以上かつ以下の2つ以上に該当する場合、肥満症の可能性が高くなります
             </div>
-            <div class="checkbox-item">
-                <input type="checkbox" id="cholesterol" value="2">
-                <label for="cholesterol">脂質異常症（コレステロール値が高い）</label>
-            </div>
-            <div class="checkbox-item">
-                <input type="checkbox" id="fatty-liver" value="2">
-                <label for="fatty-liver">脂肪肝と診断されたことがある</label>
-            </div>
-            <div class="checkbox-item">
-                <input type="checkbox" id="sleep-apnea" value="2">
-                <label for="sleep-apnea">睡眠時無呼吸症候群の症状がある</label>
-            </div>
-            <div class="checkbox-item">
-                <input type="checkbox" id="joint-pain" value="1">
-                <label for="joint-pain">膝や腰の痛みがある</label>
-            </div>
-        </div>
-
-        <div class="section">
-            <h2>🍔 生活習慣</h2>
-            <div class="checkbox-item">
-                <input type="checkbox" id="overeating" value="2">
-                <label for="overeating">食べ過ぎることが多い</label>
-            </div>
-            <div class="checkbox-item">
-                <input type="checkbox" id="late-night" value="1">
-                <label for="late-night">夜遅い時間に食事をすることが多い</label>
-            </div>
-            <div class="checkbox-item">
-                <input type="checkbox" id="fast-food" value="1">
-                <label for="fast-food">週3回以上外食やファストフードを食べる</label>
-            </div>
-            <div class="checkbox-item">
-                <input type="checkbox" id="snacking" value="1">
-                <label for="snacking">間食や甘い飲み物をよく摂る</label>
-            </div>
-            <div class="checkbox-item">
-                <input type="checkbox" id="no-exercise" value="2">
-                <label for="no-exercise">ほとんど運動をしない</label>
-            </div>
-            <div class="checkbox-item">
-                <input type="checkbox" id="sedentary" value="1">
-                <label for="sedentary">座っている時間が1日8時間以上</label>
-            </div>
-            <div class="checkbox-item">
-                <input type="checkbox" id="alcohol" value="1">
-                <label for="alcohol">お酒をよく飲む（週5回以上）</label>
-            </div>
-        </div>
-
-        <div class="section">
-            <h2>👨‍👩‍👧‍👦 家族歴</h2>
-            <div class="checkbox-item">
-                <input type="checkbox" id="family-diabetes" value="2">
-                <label for="family-diabetes">家族に糖尿病の人がいる</label>
-            </div>
-            <div class="checkbox-item">
-                <input type="checkbox" id="family-heart" value="1">
-                <label for="family-heart">家族に心疾患の人がいる</label>
-            </div>
-            <div class="checkbox-item">
-                <input type="checkbox" id="family-obesity" value="1">
-                <label for="family-obesity">家族に肥満の人が多い</label>
-            </div>
-        </div>
-
-        <button onclick="calculateResult()">診断結果を見る</button>
-
-        <div class="result" id="result">
-            <h3>診断結果</h3>
-            <div class="result-content">
-                <div class="bmi-result" id="bmi-display"></div>
-                <div id="risk-assessment"></div>
-                <div class="recommendation">
-                    <h4>💡 推奨事項</h4>
-                    <ul id="recommendations"></ul>
+            <div class="checkbox-group">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="glucose-intolerance" data-group="B">
+                    <label for="glucose-intolerance">1. 耐糖能障害（2型糖尿病、耐糖能異常、空腹時血糖異常など）</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="dyslipidemia" data-group="B">
+                    <label for="dyslipidemia">2. 脂質異常症</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="hypertension" data-group="B">
+                    <label for="hypertension">3. 高血圧</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="hyperuricemia" data-group="B">
+                    <label for="hyperuricemia">4. 高尿酸血症・痛風</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="coronary-disease" data-group="B">
+                    <label for="coronary-disease">5. 冠動脈疾患（心筋梗塞、狭心症など）</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="cerebral-infarction" data-group="B">
+                    <label for="cerebral-infarction">6. 脳梗塞・一過性脳虚血発作</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="nafld" data-group="B">
+                    <label for="nafld">7. 非アルコール性脂肪性肝疾患（NAFLD）</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="menstrual-disorder" data-group="B">
+                    <label for="menstrual-disorder">8. 月経異常・女性不妊</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="sleep-apnea" data-group="B">
+                    <label for="sleep-apnea">9. 睡眠時無呼吸症候群・肥満低換気症候群</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="joint-disease" data-group="B">
+                    <label for="joint-disease">10. 運動器疾患（変形性関節症、変形性脊椎症など）</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="kidney-disease" data-group="B">
+                    <label for="kidney-disease">11. 肥満関連腎臓病</label>
                 </div>
             </div>
         </div>
+
+        <!-- Buttons -->
+        <div class="button-group">
+            <button class="btn-primary" onclick="calculateDiagnosis()">📋 診断判定を実行</button>
+            <button class="btn-secondary" onclick="window.print()">🖨️ 印刷</button>
+        </div>
+
+        <!-- Result -->
+        <div class="result" id="result"></div>
     </div>
 
     <script>
-        function calculateResult() {
-            // BMI計算
+        // 日付表示
+        document.getElementById('printDate').textContent =
+            '実施日: ' + new Date().toLocaleDateString('ja-JP', {year: 'numeric', month: 'long', day: 'numeric'});
+
+        function calculateDiagnosis() {
+            // 入力値の取得
             const height = parseFloat(document.getElementById('height').value);
             const weight = parseFloat(document.getElementById('weight').value);
+            const waist = parseFloat(document.getElementById('waist').value);
             const age = parseInt(document.getElementById('age').value);
+            const gender = document.getElementById('gender').value;
 
-            if (!height || !weight || !age) {
-                alert('身長、体重、年齢をすべて入力してください。');
+            // バリデーション
+            if (!height || !weight || !age || !gender) {
+                alert('必須項目（身長、体重、年齢、性別）をすべて入力してください。');
                 return;
             }
 
+            // BMI計算
             const heightM = height / 100;
             const bmi = (weight / (heightM * heightM)).toFixed(1);
 
-            // チェックリスト項目のスコア計算
-            const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
-            let totalScore = 0;
-            checkboxes.forEach(checkbox => {
-                totalScore += parseInt(checkbox.value);
-            });
+            // A群のチェック
+            const groupA = document.querySelectorAll('input[data-group="A"]:checked');
+            const groupACount = groupA.length;
 
-            // BMIによるリスク判定
-            let bmiCategory = '';
-            let bmiRisk = '';
-            let bmiScore = 0;
+            // B群のチェック
+            const groupB = document.querySelectorAll('input[data-group="B"]:checked');
+            const groupBCount = groupB.length;
 
-            if (bmi < 18.5) {
-                bmiCategory = '低体重';
-                bmiRisk = 'low';
-                bmiScore = 0;
-            } else if (bmi < 25) {
-                bmiCategory = '普通体重';
-                bmiRisk = 'low';
-                bmiScore = 0;
-            } else if (bmi < 30) {
-                bmiCategory = '肥満(1度)';
-                bmiRisk = 'medium';
-                bmiScore = 3;
-            } else if (bmi < 35) {
-                bmiCategory = '肥満(2度)';
-                bmiRisk = 'high';
-                bmiScore = 5;
-            } else {
-                bmiCategory = '肥満(3度以上)';
-                bmiRisk = 'high';
-                bmiScore = 7;
+            // 内臓脂肪型肥満の判定
+            let visceralObesity = false;
+            if (waist) {
+                if (gender === 'male' && waist >= 85) {
+                    visceralObesity = true;
+                } else if (gender === 'female' && waist >= 90) {
+                    visceralObesity = true;
+                }
             }
 
-            totalScore += bmiScore;
+            // 診断ロジック
+            let diagnosis = '';
+            let resultClass = '';
+            let recommendationLevel = '';
+
+            if (bmi < 25) {
+                // BMI 25未満
+                diagnosis = '判定：肥満症の可能性は低い';
+                resultClass = 'result-negative';
+                recommendationLevel = 'low';
+            } else if (bmi >= 35) {
+                // 高度肥満症（BMI 35以上）
+                diagnosis = '判定：高度肥満症の可能性が高い';
+                resultClass = 'result-high-risk';
+                recommendationLevel = 'high';
+            } else if (bmi >= 25 && groupACount >= 1) {
+                // BMI 25以上 + A群1つ以上
+                diagnosis = '判定：肥満症の可能性が高い（治療中の疾患あり）';
+                resultClass = 'result-positive';
+                recommendationLevel = 'high';
+            } else if (bmi >= 27 && groupBCount >= 2) {
+                // BMI 27以上 + B群2つ以上
+                diagnosis = '判定：肥満症の可能性が高い（複数の健康障害あり）';
+                resultClass = 'result-positive';
+                recommendationLevel = 'high';
+            } else if (bmi >= 25 && groupBCount >= 1) {
+                // BMI 25以上 + B群1つ以上
+                diagnosis = '判定：肥満症の可能性あり';
+                resultClass = 'result-positive';
+                recommendationLevel = 'medium';
+            } else if (bmi >= 25 && visceralObesity) {
+                // BMI 25以上 + 内臓脂肪型肥満
+                diagnosis = '判定：内臓脂肪型肥満あり（要注意）';
+                resultClass = 'result-positive';
+                recommendationLevel = 'medium';
+            } else if (bmi >= 25) {
+                // BMI 25以上のみ
+                diagnosis = '判定：肥満（経過観察）';
+                resultClass = 'result-positive';
+                recommendationLevel = 'low-medium';
+            } else {
+                diagnosis = '判定：肥満症の可能性は低い';
+                resultClass = 'result-negative';
+                recommendationLevel = 'low';
+            }
 
             // 結果表示
-            const bmiDisplay = document.getElementById('bmi-display');
-            bmiDisplay.innerHTML = `
-                <strong>BMI: ${bmi}</strong> (${bmiCategory})
-                <span class="risk-level risk-${bmiRisk}">${bmiCategory}</span>
-            `;
+            displayResult(bmi, diagnosis, resultClass, recommendationLevel, groupACount, groupBCount, visceralObesity, gender);
+        }
 
-            // リスク評価
-            const riskAssessment = document.getElementById('risk-assessment');
-            let overallRisk = '';
-            let riskClass = '';
-            let riskMessage = '';
-
-            if (totalScore <= 5) {
-                overallRisk = '低リスク';
-                riskClass = 'low';
-                riskMessage = '現在の健康状態は比較的良好です。引き続き健康的な生活習慣を維持しましょう。';
-            } else if (totalScore <= 12) {
-                overallRisk = '中リスク';
-                riskClass = 'medium';
-                riskMessage = '肥満症のリスクがやや高まっています。生活習慣の改善を検討することをお勧めします。';
-            } else {
-                overallRisk = '高リスク';
-                riskClass = 'high';
-                riskMessage = '肥満症のリスクが高い状態です。医療機関での相談をお勧めします。';
-            }
-
-            riskAssessment.innerHTML = `
-                <p style="font-size: 1.2em; margin-bottom: 15px;">
-                    <strong>総合評価:</strong>
-                    <span class="risk-level risk-${riskClass}">${overallRisk}</span>
-                </p>
-                <p>${riskMessage}</p>
-            `;
-
-            // 推奨事項
-            const recommendations = document.getElementById('recommendations');
-            const recommendationsList = [];
-
-            if (bmi >= 25) {
-                recommendationsList.push('適正体重に向けて減量を検討しましょう（目標: BMI 18.5〜24.9）');
-            }
-
-            if (document.getElementById('no-exercise').checked || document.getElementById('sedentary').checked) {
-                recommendationsList.push('1日30分以上の有酸素運動を週5回以上行いましょう');
-                recommendationsList.push('座りっぱなしを避け、1時間ごとに立ち上がって軽く体を動かしましょう');
-            }
-
-            if (document.getElementById('overeating').checked || document.getElementById('late-night').checked || document.getElementById('fast-food').checked) {
-                recommendationsList.push('バランスの取れた食事を心がけ、野菜を多く摂りましょう');
-                recommendationsList.push('夕食は就寝3時間前までに済ませるようにしましょう');
-                recommendationsList.push('外食は週2回以内に抑え、自炊を増やしましょう');
-            }
-
-            if (document.getElementById('snacking').checked) {
-                recommendationsList.push('間食は控えめにし、甘い飲み物を水やお茶に置き換えましょう');
-            }
-
-            if (document.getElementById('diabetes').checked || document.getElementById('hypertension').checked || document.getElementById('cholesterol').checked) {
-                recommendationsList.push('定期的な健康診断を受け、医師の指導に従いましょう');
-                recommendationsList.push('塩分や糖分の摂取を控えめにしましょう');
-            }
-
-            if (document.getElementById('sleep-apnea').checked) {
-                recommendationsList.push('睡眠時無呼吸症候群の検査を受けることを検討しましょう');
-            }
-
-            if (totalScore > 12) {
-                recommendationsList.push('医療機関で専門医に相談し、適切な治療計画を立てましょう');
-            }
-
-            if (recommendationsList.length === 0) {
-                recommendationsList.push('現在の健康的な生活習慣を継続しましょう');
-                recommendationsList.push('定期的な健康診断を受けましょう');
-            }
-
-            recommendations.innerHTML = recommendationsList.map(rec => `<li>${rec}</li>`).join('');
-
-            // 結果を表示
+        function displayResult(bmi, diagnosis, resultClass, recommendationLevel, groupACount, groupBCount, visceralObesity, gender) {
             const resultDiv = document.getElementById('result');
-            resultDiv.classList.add('show');
+
+            let bmiCategory = '';
+            if (bmi < 18.5) bmiCategory = '低体重';
+            else if (bmi < 25) bmiCategory = '普通体重';
+            else if (bmi < 30) bmiCategory = '肥満(1度)';
+            else if (bmi < 35) bmiCategory = '肥満(2度)';
+            else bmiCategory = '肥満(3度以上)';
+
+            let visceralText = '';
+            if (visceralObesity) {
+                const threshold = gender === 'male' ? '85cm' : '90cm';
+                visceralText = `<p style="color: #d32f2f; font-weight: 600;">⚠️ 内臓脂肪型肥満の可能性あり（腹囲 ${threshold}以上）</p>`;
+            }
+
+            let html = `
+                <h2>📊 ${diagnosis}</h2>
+                <div class="warning-text">
+                    ${diagnosis.includes('可能性が高い') || diagnosis.includes('高度肥満症') ?
+                        '🏥 <strong style="color: #d32f2f;">至急、肥満症外来または内科への受診をお勧めします</strong>' :
+                        diagnosis.includes('可能性あり') || diagnosis.includes('要注意') ?
+                        '🏥 <strong style="color: #f57c00;">医療機関での診察をお勧めします</strong>' :
+                        '✅ 現在の状態を維持し、定期的な健康診断を受けましょう'}
+                </div>
+                <div class="bmi-display">
+                    <strong>BMI: ${bmi}</strong> （${bmiCategory}）
+                    ${visceralText}
+                </div>
+                <div class="result-content">
+                    <h3 style="margin-bottom: 10px;">判定根拠：</h3>
+                    <ul style="margin-left: 20px; margin-bottom: 20px;">
+                        <li>BMI: ${bmi} ${bmi >= 25 ? '(肥満基準該当)' : '(肥満基準未満)'}</li>
+                        <li>治療中の疾患（A群）: ${groupACount}項目</li>
+                        <li>健康障害（B群）: ${groupBCount}項目</li>
+                        ${visceralObesity ? '<li>内臓脂肪型肥満: あり</li>' : ''}
+                    </ul>
+                    ${generateRecommendations(recommendationLevel, bmi)}
+                </div>
+            `;
+
+            resultDiv.className = 'result ' + resultClass + ' show';
+            resultDiv.innerHTML = html;
             resultDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function generateRecommendations(level, bmi) {
+            let recommendations = '<div class="recommendation-box"><h3>💡 推奨事項</h3><ul>';
+
+            if (level === 'high') {
+                recommendations += `
+                    <li><strong style="color: #d32f2f;">【至急】肥満症外来または内科を受診してください</strong></li>
+                    <li>医師による詳細な検査（内臓脂肪測定、血液検査など）が必要です</li>
+                    <li>治療方針：食事療法・運動療法・行動療法が基本となります</li>
+                    ${bmi >= 35 ? '<li>高度肥満症（BMI 35以上）のため、薬物療法や外科治療も検討対象となります</li>' : ''}
+                    <li>合併症の管理と定期的なモニタリングが重要です</li>
+                `;
+            } else if (level === 'medium') {
+                recommendations += `
+                    <li><strong style="color: #f57c00;">医療機関での相談をお勧めします</strong></li>
+                    <li>健康障害の早期発見・早期治療が重要です</li>
+                    <li>生活習慣の改善指導を受けることをお勧めします</li>
+                    <li>3〜6ヶ月で3〜5%の減量を目標にしましょう</li>
+                `;
+            } else if (level === 'low-medium') {
+                recommendations += `
+                    <li>現時点で合併症はありませんが、予防が重要です</li>
+                    <li>生活習慣の改善に取り組みましょう</li>
+                    <li>定期的な健康診断を受けて、早期発見に努めましょう</li>
+                `;
+            } else {
+                recommendations += `
+                    <li>現在の健康的な体重を維持しましょう</li>
+                    <li>バランスの良い食事と適度な運動を継続しましょう</li>
+                    <li>年1回の健康診断を受けましょう</li>
+                `;
+            }
+
+            if (level !== 'low') {
+                recommendations += `
+                    <li><strong>食事改善：</strong>主食・主菜・副菜のバランス、野菜を多く、間食・夜食を控える</li>
+                    <li><strong>運動習慣：</strong>1日30分以上の有酸素運動を週5回以上</li>
+                    <li><strong>行動改善：</strong>食事記録、体重測定、睡眠の質向上、ストレス管理</li>
+                `;
+            }
+
+            recommendations += '</ul></div>';
+
+            // 医学的補足情報
+            recommendations += `
+                <div class="note" style="margin-top: 20px;">
+                    <strong>📌 医療従事者の方へ</strong><br>
+                    このチェックリストは日本肥満学会の「肥満症診療ガイドライン」に基づいています。
+                    最終診断は医師が行い、必要に応じて腹部CT検査による内臓脂肪面積測定（100cm²以上で内臓脂肪型肥満）や
+                    詳細な血液検査を実施してください。
+                </div>
+            `;
+
+            return recommendations;
         }
     </script>
 </body>
