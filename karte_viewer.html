@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>カルテ作成ツール</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Hiragino Kaku Gothic ProN', 'メイリオ', Meiryo, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 800px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+
+        .input-section {
+            margin-bottom: 30px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: #333;
+            font-weight: bold;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            resize: vertical;
+            transition: border-color 0.3s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        button {
+            flex: 1;
+            padding: 15px 30px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .karte-output {
+            background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            min-height: 200px;
+            white-space: pre-wrap;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .karte-output:hover {
+            background: #e9ecef;
+            border-color: #667eea;
+        }
+
+        .karte-output.empty {
+            color: #999;
+            font-style: italic;
+        }
+
+        .copy-notice {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #28a745;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 0.3s;
+            pointer-events: none;
+        }
+
+        .copy-notice.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .copy-hint {
+            text-align: center;
+            color: #666;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+
+        .char-count {
+            text-align: right;
+            color: #666;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .char-count.warning {
+            color: #ff6b6b;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📋 カルテ作成ツール</h1>
+
+        <div class="input-section">
+            <label for="voiceData">音声データの内容を入力:</label>
+            <textarea id="voiceData" placeholder="診療内容を入力してください..."></textarea>
+            <div class="char-count" id="charCount">0文字</div>
+        </div>
+
+        <div class="button-group">
+            <button onclick="createKarte()">カルテ作成</button>
+            <button onclick="clearAll()" style="background: #6c757d;">クリア</button>
+        </div>
+
+        <label>生成されたカルテ (クリックでコピー):</label>
+        <div class="karte-output empty" id="karteOutput" onclick="copyKarte()">
+            ここにカルテが表示されます
+        </div>
+        <div class="copy-hint">💡 カルテをクリックするとクリップボードにコピーされます</div>
+    </div>
+
+    <div class="copy-notice" id="copyNotice">
+        ✓ コピーしました！
+    </div>
+
+    <script>
+        const voiceDataInput = document.getElementById('voiceData');
+        const karteOutput = document.getElementById('karteOutput');
+        const copyNotice = document.getElementById('copyNotice');
+        const charCount = document.getElementById('charCount');
+
+        // 文字数カウント
+        voiceDataInput.addEventListener('input', function() {
+            const count = this.value.length;
+            charCount.textContent = `${count}文字`;
+        });
+
+        function summarizeText(text, maxLength = 200) {
+            // 改行や余分な空白を整理
+            text = text.split(/\s+/).join(' ');
+
+            // 指定文字数以内の場合はそのまま返す
+            if (text.length <= maxLength) {
+                return text;
+            }
+
+            // 句点で区切って要約
+            const sentences = text.split('。');
+            let summary = '';
+
+            for (let sentence of sentences) {
+                if ((summary + sentence + '。').length <= maxLength) {
+                    summary += sentence + '。';
+                } else {
+                    break;
+                }
+            }
+
+            // 句点で切れなかった場合は単純に切り詰め
+            if (!summary || summary.length === 0) {
+                summary = text.substring(0, maxLength - 3) + '...';
+            }
+
+            return summary.trim();
+        }
+
+        function createKarte() {
+            const content = voiceDataInput.value.trim();
+
+            if (!content) {
+                alert('音声データの内容を入力してください');
+                return;
+            }
+
+            const today = new Date();
+            const dateStr = `${today.getFullYear()}年${today.getMonth() + 1}月${today.getDate()}日`;
+            const timeStr = `${today.getFullYear()}年${today.getMonth() + 1}月${today.getDate()}日 ${String(today.getHours()).padStart(2, '0')}:${String(today.getMinutes()).padStart(2, '0')}:${String(today.getSeconds()).padStart(2, '0')}`;
+
+            const summary = summarizeText(content, 200);
+
+            const karte = `============================================================
+カルテ
+============================================================
+日付: ${dateStr}
+============================================================
+
+【診療記録】
+${summary}
+
+============================================================
+文字数: ${summary.length}文字
+作成日時: ${timeStr}
+============================================================`;
+
+            karteOutput.textContent = karte;
+            karteOutput.classList.remove('empty');
+        }
+
+        function copyKarte() {
+            const text = karteOutput.textContent;
+
+            if (karteOutput.classList.contains('empty')) {
+                return;
+            }
+
+            navigator.clipboard.writeText(text).then(() => {
+                showCopyNotice();
+            }).catch(err => {
+                console.error('コピーに失敗しました:', err);
+                alert('コピーに失敗しました');
+            });
+        }
+
+        function showCopyNotice() {
+            copyNotice.classList.add('show');
+            setTimeout(() => {
+                copyNotice.classList.remove('show');
+            }, 2000);
+        }
+
+        function clearAll() {
+            voiceDataInput.value = '';
+            karteOutput.textContent = 'ここにカルテが表示されます';
+            karteOutput.classList.add('empty');
+            charCount.textContent = '0文字';
+        }
+
+        // サンプルデータ（デモ用）
+        const sampleData = `どうですか、調子は？血圧と体重についてですが、血圧は正常位で130/77だったんですけど、どれくらいですか？125/80ぐらいでしょうか？体重は64キロでしたけど、同じぐらいでしたか？データを見ましょうか。
+
+糖尿病の方については、ヘモグロビンA1cが7.9%で、血糖値はやっぱりちょっと上がってきていますね。今のこの時期だと果物を食べたりすると上がることがあります。このまま少し上がっていくと、来年は薬を少し増やさなきゃいけないかもしれません。ただ、運動と食事のバランスを少し整えていただければと思います。
+
+ミネラルや腎臓、肝臓など他の臓器は大丈夫なので、このまま様子を見ていきましょう。このままいきましょう。よろしくお願いします。
+
+えーとですね、今のペースで行くと1月の21日とかですかね。もしくは薬が余っていたら2月4日とか。2月は？2月4日で入れておきますんで、分かりました。よいお年を。また来年もよろしくお願いします。`;
+    </script>
+</body>
+</html>
