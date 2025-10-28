@@ -197,7 +197,7 @@
             charCount.textContent = `${count}文字`;
         });
 
-        function summarizeText(text, maxLength = 200) {
+        function summarizeText(text, maxLength = 500) {
             // 改行や余分な空白を整理
             text = text.split(/\s+/).join(' ');
 
@@ -238,7 +238,7 @@
             const dateStr = `${today.getFullYear()}年${today.getMonth() + 1}月${today.getDate()}日`;
             const timeStr = `${today.getFullYear()}年${today.getMonth() + 1}月${today.getDate()}日 ${String(today.getHours()).padStart(2, '0')}:${String(today.getMinutes()).padStart(2, '0')}:${String(today.getSeconds()).padStart(2, '0')}`;
 
-            const summary = summarizeText(content, 200);
+            const summary = summarizeText(content, 500);
 
             const karte = `日付: ${dateStr}
 

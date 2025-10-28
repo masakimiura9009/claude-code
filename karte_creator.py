@@ -2,20 +2,20 @@
 # -*- coding: utf-8 -*-
 """
 カルテ作成ツール
-音声データの内容を200文字以内に要約してカルテ形式で出力
+音声データの内容を500文字以内に要約してカルテ形式で出力
 """
 
 import sys
 from datetime import datetime
 
 
-def summarize_text(text, max_length=200):
+def summarize_text(text, max_length=500):
     """
     テキストを指定文字数以内に要約
 
     Args:
         text (str): 要約する元のテキスト
-        max_length (int): 最大文字数（デフォルト200文字）
+        max_length (int): 最大文字数（デフォルト500文字）
 
     Returns:
         str: 要約されたテキスト
@@ -44,7 +44,7 @@ def summarize_text(text, max_length=200):
     return summary.strip()
 
 
-def create_karte(date_str, content, max_length=200):
+def create_karte(date_str, content, max_length=500):
     """
     カルテ形式で出力
 
@@ -89,7 +89,7 @@ def main():
     today = datetime.now().strftime('%Y年%m月%d日')
 
     # カルテ作成
-    karte = create_karte(today, content, max_length=200)
+    karte = create_karte(today, content, max_length=500)
     print(karte)
 
 
