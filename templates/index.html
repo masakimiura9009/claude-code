@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>病名管理システム</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏥 病名管理システム</h1>
+            <p class="subtitle">保険査定対応 - 検査・処方と病名の紐付け管理</p>
+        </header>
+
+        <!-- タブナビゲーション -->
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="disease-management">病名管理</button>
+            <button class="tab-btn" data-tab="suggestion">病名提案</button>
+            <button class="tab-btn" data-tab="reference">検査・処方一覧</button>
+        </div>
+
+        <!-- 病名管理タブ -->
+        <div id="disease-management" class="tab-content active">
+            <div class="controls">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="病名、カナ、説明で検索...">
+                    <select id="categoryFilter">
+                        <option value="">すべてのカテゴリ</option>
+                    </select>
+                    <button id="searchBtn" class="btn btn-primary">検索</button>
+                </div>
+                <button id="addDiseaseBtn" class="btn btn-success">+ 新規病名追加</button>
+            </div>
+
+            <div class="disease-list" id="diseaseList">
+                <!-- 病名一覧がここに表示されます -->
+            </div>
+        </div>
+
+        <!-- 病名提案タブ -->
+        <div id="suggestion" class="tab-content">
+            <div class="suggestion-panel">
+                <h2>検査・処方から病名を提案</h2>
+                <p class="help-text">患者さんに実施する検査項目や処方する薬を選択すると、保険査定上必要な病名を提案します。</p>
+
+                <div class="selection-panel">
+                    <div class="selection-box">
+                        <h3>検査項目を選択</h3>
+                        <div id="testSelection" class="checkbox-group">
+                            <!-- 検査項目がここに表示されます -->
+                        </div>
+                    </div>
+
+                    <div class="selection-box">
+                        <h3>処方薬を選択</h3>
+                        <div id="prescriptionSelection" class="checkbox-group">
+                            <!-- 処方薬がここに表示されます -->
+                        </div>
+                    </div>
+                </div>
+
+                <button id="suggestBtn" class="btn btn-primary btn-large">病名を提案</button>
+
+                <div id="suggestedDiseases" class="suggested-diseases">
+                    <!-- 提案された病名がここに表示されます -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 検査・処方一覧タブ -->
+        <div id="reference" class="tab-content">
+            <div class="reference-panel">
+                <div class="reference-box">
+                    <h2>検査項目一覧</h2>
+                    <table id="testsTable" class="data-table">
+                        <thead>
+                            <tr>
+                                <th>検査名</th>
+                                <th>コード</th>
+                                <th>説明</th>
+                                <th>関連病名</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- 検査項目がここに表示されます -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="reference-box">
+                    <h2>処方薬一覧</h2>
+                    <table id="prescriptionsTable" class="data-table">
+                        <thead>
+                            <tr>
+                                <th>薬剤名</th>
+                                <th>一般名</th>
+                                <th>薬価コード</th>
+                                <th>説明</th>
+                                <th>関連病名</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- 処方薬がここに表示されます -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 病名編集モーダル -->
+    <div id="diseaseModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="modalTitle">新規病名追加</h2>
+            <form id="diseaseForm">
+                <input type="hidden" id="diseaseId">
+
+                <div class="form-group">
+                    <label for="diseaseName">病名 *</label>
+                    <input type="text" id="diseaseName" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="diseaseKana">病名カナ</label>
+                    <input type="text" id="diseaseKana">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="diseaseCategory">カテゴリ</label>
+                        <input type="text" id="diseaseCategory">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="diseaseIcd10">ICD-10コード</label>
+                        <input type="text" id="diseaseIcd10">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="diseaseDescription">病名説明</label>
+                    <textarea id="diseaseDescription" rows="3"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="diseaseSymptoms">症状</label>
+                    <textarea id="diseaseSymptoms" rows="2"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="diseaseTreatment">治療</label>
+                    <textarea id="diseaseTreatment" rows="2"></textarea>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">保存</button>
+                    <button type="button" class="btn btn-secondary" id="cancelBtn">キャンセル</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
